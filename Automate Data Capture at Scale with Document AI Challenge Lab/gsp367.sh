@@ -77,7 +77,8 @@ cd ~/document-ai-challenge/scripts
 
 gcloud projects add-iam-policy-binding $PROJECT_ID \
   --member="serviceAccount:$PROJECT_NUMBER-compute@developer.gserviceaccount.com" \
-  --role="roles/artifactregistry.reader"
+  --role="roles/artifactregistry.reader" \
+  --role="roles/pubsub.publisher"
 
 export CLOUD_FUNCTION_LOCATION=$REGION
 
@@ -94,7 +95,7 @@ gcloud functions deploy process-invoices \
 --env-vars-file=cloud-functions/process-invoices/.env.yaml \
 --trigger-resource=gs://${PROJECT_ID}-input-invoices \
 --trigger-event=google.storage.object.finalize \
---no-gen2
+--gen2
 }
 
 deploy_success=false
@@ -128,7 +129,7 @@ gcloud functions deploy process-invoices \
   --trigger-event=google.storage.object.finalize \
   --update-env-vars=PROCESSOR_ID=${PROCESSOR_ID},PARSER_LOCATION=us,PROJECT_ID=${PROJECT_ID} \
   --service-account=$PROJECT_NUMBER-compute@developer.gserviceaccount.com \
-  --no-gen2
+  --gen2
 
 export PROJECT_ID=$(gcloud config get-value core/project)
 gsutil -m cp -r gs://cloud-training/gsp367/* \
